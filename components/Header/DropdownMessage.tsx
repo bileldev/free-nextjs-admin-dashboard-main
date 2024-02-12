@@ -1,10 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-
+import io from 'socket.io-client';
+// const socket = io.connect('http://localhost:3001');
+const socket = io('http://localhost:3001');
 const DropdownMessage = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [notifying, setNotifying] = useState(true);
+  const [id, setId] = useState("");
+  const [personalId, setPersonalId] = useState({});
+
 
   const trigger = useRef<any>(null);
   const dropdown = useRef<any>(null);
@@ -35,6 +40,39 @@ const DropdownMessage = () => {
     return () => document.removeEventListener("keydown", keyHandler);
   });
 
+
+  //////////////////////////
+  const [room, setRoom] = useState("preimporter");
+
+      // Messages States
+      const [message, setMessage] = useState("");
+      const [messageReceived, setMessageReceived] = useState("");
+    
+      const joinRoom = () => {
+        
+        if (room !== "") {
+          socket.emit("join_room", room);
+        }
+      };
+    
+     /* const sendMessage = () => {
+        socket.emit("send_message", { message, room });
+      };*/
+    
+      useEffect(() => {
+        socket.on("receive_message", (data) => {
+          setMessageReceived(data.message);
+          console.log("Received message",data.message);
+          console.log("socket", socket);
+          //setPersonalId(socket);
+           setNotifying(true);
+           setId(data.id)
+
+
+        });
+      }, [socket]);
+      /////////////////////////////
+
   return (
     <li className="relative">
       <Link
@@ -42,6 +80,7 @@ const DropdownMessage = () => {
         onClick={() => {
           setNotifying(false);
           setDropdownOpen(!dropdownOpen);
+          joinRoom();
         }}
         className="relative flex h-8.5 w-8.5 items-center justify-center rounded-full border-[0.5px] border-stroke bg-gray hover:text-primary dark:border-strokedark dark:bg-meta-4 dark:text-white"
         href="#"
@@ -111,14 +150,16 @@ const DropdownMessage = () => {
 
               <div>
                 <h6 className="text-sm font-medium text-black dark:text-white">
-                  Mariya Desoja
+                 {id}
                 </h6>
-                <p className="text-sm">I like your confidence 💪</p>
-                <p className="text-xs">2min ago</p>
+                {/* <p className="text-sm">I like your confidence 💪</p>
+                <p className="text-xs">2min ago</p> */}
+                <p className="text-sm">{messageReceived}</p>
+                
               </div>
             </Link>
           </li>
-          <li>
+          {/* <li>
             <Link
               className="flex gap-4.5 border-t border-stroke px-4.5 py-3 hover:bg-gray-2 dark:border-strokedark dark:hover:bg-meta-4"
               href="/messages"
@@ -209,7 +250,7 @@ const DropdownMessage = () => {
                 <p className="text-xs">2min ago</p>
               </div>
             </Link>
-          </li>
+          </li> */}
         </ul>
       </div>
       {/* <!-- Dropdown End --> */}

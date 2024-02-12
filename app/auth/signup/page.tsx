@@ -1,4 +1,5 @@
-import React from "react";
+"use client"
+import React, { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
@@ -7,28 +8,63 @@ export const metadata: Metadata = {
   title: "Signup Page | Next.js E-commerce Dashboard Template",
   description: "This is Signup page for TailAdmin Next.js",
   // other metadata
-};
+};import { SyntheticEvent, useState } from 'react';
+import supabase from "@/config/supabaseClient";
+import { useRouter } from "next/navigation";
+import Loader from "@/components/common/Loader";
+// import { supabase } from '@/lib/supabase';
+interface SignUpProps {}
+const SignUp: React.FC<SignUpProps> = () => {
 
-const SignUp: React.FC = () => {
+  localStorage.removeItem("sidebar-expanded");
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [name, setName] = useState<string>(''); // Add state for name 
+  const router = useRouter();
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const handleSignUp = async (e: SyntheticEvent) => {
+    e.preventDefault();
+    
+
+    try {
+      const { data, error } = await supabase.auth.signUp({ email, password });
+      if (error) {
+        // Handle error
+        console.error(error.message);
+      } else {
+        // data signed up successfully
+        console.log('data signed up:', data);
+        router.push("/")
+      }
+    } catch (error) {
+      console.error('Error during signup:', error);
+    }
+  };
+  useEffect(() => {
+    setTimeout(() => setLoading(false), 1000);},[])
   return (
     <>
       <Breadcrumb pageName="Sign Up" />
 
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+      {loading ? (
+            <Loader />
+          ) : (
         <div className="flex flex-wrap items-center">
           <div className="hidden w-full xl:block xl:w-1/2">
             <div className="py-17.5 px-26 text-center">
               <Link className="mb-5.5 inline-block" href="/">
                 <Image
                   className="hidden dark:block"
-                  src={"/images/logo/logo.svg"}
+                  src={"/images/logo/logo-piterion.svg"}
                   alt="Logo"
                   width={176}
                   height={32}
                 />
                 <Image
                   className="dark:hidden"
-                  src={"/images/logo/logo-dark.svg"}
+                  src={"/images/logo/logo-piterion.svg"}
                   alt="Logo"
                   width={176}
                   height={32}
@@ -166,13 +202,13 @@ const SignUp: React.FC = () => {
 
           <div className="w-full border-stroke dark:border-strokedark xl:w-1/2 xl:border-l-2">
             <div className="w-full p-4 sm:p-12.5 xl:p-17.5">
-              <span className="mb-1.5 block font-medium">Start for free</span>
+              {/* <span className="mb-1.5 block font-medium">Start for free</span> */}
               <h2 className="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2">
-                Sign Up to TailAdmin
+                Sign Up to Monitor
               </h2>
 
-              <form>
-                <div className="mb-4">
+              <form onSubmit={handleSignUp}>
+                {/* <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
                     Name
                   </label>
@@ -205,7 +241,7 @@ const SignUp: React.FC = () => {
                       </svg>
                     </span>
                   </div>
-                </div>
+                </div> */}
 
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
@@ -215,6 +251,8 @@ const SignUp: React.FC = () => {
                     <input
                       type="email"
                       placeholder="Enter your email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     />
 
@@ -246,6 +284,8 @@ const SignUp: React.FC = () => {
                     <input
                       type="password"
                       placeholder="Enter your password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     />
 
@@ -273,7 +313,7 @@ const SignUp: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="mb-6">
+                {/* <div className="mb-6">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
                     Re-type Password
                   </label>
@@ -306,7 +346,7 @@ const SignUp: React.FC = () => {
                       </svg>
                     </span>
                   </div>
-                </div>
+                </div> */}
 
                 <div className="mb-5">
                   <input
@@ -365,6 +405,7 @@ const SignUp: React.FC = () => {
             </div>
           </div>
         </div>
+          )}
       </div>
     </>
   );

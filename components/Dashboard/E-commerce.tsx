@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ChartOne from "../Charts/ChartOne";
 import ChartThree from "../Charts/ChartThree";
 import ChartTwo from "../Charts/ChartTwo";
@@ -8,14 +8,19 @@ import TableOne from "../Tables/TableOne";
 import CardDataStats from "../CardDataStats";
 // import Map from "../Maps/TestMap";
 import ServerDetails from "../../app/homejs/page"
-
+import supabase from "../../config/supabaseClient"
 // without this the component renders on server and throws an error
 import dynamic from "next/dynamic";
+import Loader from "../common/Loader";
 const MapOne = dynamic(() => import("../Maps/MapOne"), {
   ssr: false,
 });
 
 const ECommerce: React.FC = () => {
+  const [loading, setLoading] = useState<boolean>(true);
+  useEffect(() => {
+    setTimeout(() => setLoading(false), 1000);},[]);
+  console.log("supabase",supabase)
   return (
     <>
 
@@ -105,7 +110,11 @@ const ECommerce: React.FC = () => {
             />
           </svg>
         </CardDataStats> */}
+         {loading ? (
+            <Loader />
+          ) : (
         <ServerDetails/>
+          )}
       </div>
 
       <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
@@ -117,6 +126,7 @@ const ECommerce: React.FC = () => {
           <TableOne />
         </div>
         <ChatCard />
+        
       </div>
     </>
   );
