@@ -36,6 +36,17 @@ const SignIn: React.FC<SignInProps> = () => {
       console.error('Error during signup:', error);
     }
   };
+
+  const handleSignInGoogle = async (e: SyntheticEvent) => {
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+      } )
+    }
+    catch (error){
+      console.error('Error during signup:', error);
+    }
+  }
   // useEffect(()={
   //   setTimeout(() =>setLoading(false), 1000);
   // },[])
@@ -292,7 +303,9 @@ const SignIn: React.FC<SignInProps> = () => {
                   />
                 </div>
 
-                <button className="flex w-full items-center justify-center gap-3.5 rounded-lg border border-stroke bg-gray p-4 hover:bg-opacity-50 dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-50">
+                <button
+                onClick={handleSignInGoogle} 
+                className="flex w-full items-center justify-center gap-3.5 rounded-lg border border-stroke bg-gray p-4 hover:bg-opacity-50 dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-50">
                   <span>
                     <svg
                       width="20"
